@@ -3,6 +3,5 @@ numpy
 streamlit
 plotly
 requests
-openpyxl
 
 
