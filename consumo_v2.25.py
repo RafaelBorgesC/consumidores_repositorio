@@ -57,7 +57,7 @@ def carregar_dados(url, ano, max_requests=50, max_retries=5, max_empty_responses
         df["MES_REFERENCIA"] = df["MES_REFERENCIA"].astype(str)
         df["MES_REFERENCIA"] = df["MES_REFERENCIA"].apply(lambda x: f"01/{x[4:6]}/{x[:4]}")
     
-    return df
+    return df.astype(str)
 
 @st.cache_data(show_spinner=True)
 def carregar_excel(nome_arquivo, ano):
