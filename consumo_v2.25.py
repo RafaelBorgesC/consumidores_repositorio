@@ -61,9 +61,9 @@ def carregar_dados(url, ano, max_requests=50, max_retries=5, max_empty_responses
 
 @st.cache_data(show_spinner=True)
 def carregar_excel(nome_arquivo, ano):
-    df = pd.read_excel(nome_arquivo)
+    df = pd.read_json(nome_arquivo, orient="split", compression="gzip")
     if "MES_REFERENCIA" in df.columns:
-        df["MES_REFERENCIA"] = pd.to_datetime(df["MES_REFERENCIA"], dayfirst=True).dt.strftime("%d/%m/%Y")
+        df["MES_REFERENCIA"] = pd.to_datetime(df["MES_REFERENCIA"], dayfirst=True, unit='ms', errors='coerce').dt.strftime("%d/%m/%Y")
     return df
 
 # Status carregamento
@@ -74,10 +74,10 @@ df_2024_api = carregar_dados(base_url_2024, 2024)
 df_2024_api["MES_REFERENCIA"] = pd.to_datetime(df_2024_api["MES_REFERENCIA"], dayfirst=True, errors="coerce")
 df_2024_api = df_2024_api[df_2024_api["MES_REFERENCIA"].dt.month != 4]
 
-df_xlsx_2024 = carregar_excel("base_de_dados_nacional_2024.xlsx", 2024)
+df_xlsx_2024 = carregar_excel("base_de_dados_nacional_2024_split.json", 2024)
 df_2024 = pd.concat([df_xlsx_2024, df_2024_api], ignore_index=True)
-df_xlsx_2023 = carregar_excel("base_de_dados_nacional_2023.xlsx", 2023)
-df_xlsx_2022 = carregar_excel("base_de_dados_nacional_2022.xlsx", 2022)
+df_xlsx_2023 = carregar_excel("base_de_dados_nacional_2023_split.json", 2023)
+df_xlsx_2022 = carregar_excel("base_de_dados_nacional_2022_split.json", 2022)
 
 # Consolidar tudo
 df_total = pd.concat([df_xlsx_2022, df_xlsx_2023, df_2024, df_2025], ignore_index=True)
