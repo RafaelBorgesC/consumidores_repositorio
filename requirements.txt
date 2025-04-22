@@ -5,4 +5,3 @@ plotly
 requests
 python-time
 python-calendar
-python-re
