@@ -61,7 +61,7 @@ def carregar_dados(url, ano, max_requests=50, max_retries=5, max_empty_responses
 
 @st.cache_data(show_spinner=True)
 def carregar_excel(nome_arquivo, ano):
-    df = pd.read_json(nome_arquivo, orient="split", compression="gzip")
+    df = pd.read_json(nome_arquivo, lines=True, compression="gzip")
     if "MES_REFERENCIA" in df.columns:
         df["MES_REFERENCIA"] = pd.to_datetime(df["MES_REFERENCIA"], dayfirst=True, unit='ms', errors='coerce').dt.strftime("%d/%m/%Y")
     return df
