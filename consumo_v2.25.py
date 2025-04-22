@@ -81,13 +81,21 @@ df_xlsx_2022 = carregar_excel("base_de_dados_nacional_2022_split.json", 2022)
 
 # Consolidar tudo
 df_total = pd.concat([df_xlsx_2022, df_xlsx_2023, df_2024, df_2025], ignore_index=True)
-df_total["MES_REFERENCIA"] = pd.to_datetime(df_total["MES_REFERENCIA"], format="%d/%m/%Y")
+df_total["MES_REFERENCIA"] = pd.to_datetime(df_total["MES_REFERENCIA"], format="%d/%m/%Y", errors="coerce")
+# Remove rows with invalid dates
+df_total = df_total.dropna(subset=["MES_REFERENCIA"])
 df_total_ord = df_total.sort_values(by="MES_REFERENCIA", ascending=False)
 
 if "id" in df_total_ord.columns:
     df_total_ord = df_total_ord.drop(columns=["id"])
 
-df_total_ord["HORAS_NO_MES"] = df_total_ord["MES_REFERENCIA"].apply(lambda x: monthrange(x.year, x.month)[1] * 24)
+# Fix for IllegalMonthError - Add error handling for NaN values
+def calcular_horas_mes(data):
+    if pd.isna(data) or not isinstance(data, pd.Timestamp):
+        return 720  # Default value: 30 days * 24 hours
+    return monthrange(data.year, data.month)[1] * 24
+
+df_total_ord["HORAS_NO_MES"] = df_total_ord["MES_REFERENCIA"].apply(calcular_horas_mes)
 
 col_consumo = next((col for col in df_total_ord.columns if "CONSUMO" in col.upper() and "TOTAL" in col.upper()), None)
 if col_consumo:
@@ -257,7 +265,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
 
     # 🔹 Determinar o centro decisório
     definir_centro = df_ultimos_12_meses.copy()
-    definir_centro["MATRIZ"] = definir_centro["CNPJ_CARGA"].apply(lambda x: x[11:15] == "0001")
+    definir_centro["MATRIZ"] = definir_centro["CNPJ_CARGA"].apply(lambda x: x[11:15] == "0001" if len(x) >= 15 else False)
 
     consumo_por_cnpj = definir_centro.groupby("CNPJ_CARGA")["CONSUMO_MWm"].mean().reset_index()
     definir_centro = definir_centro.merge(consumo_por_cnpj, on="CNPJ_CARGA", suffixes=("", "_MEDIO"))
@@ -265,8 +273,11 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     if definir_centro["MATRIZ"].any():
         centro_decisorio = definir_centro[definir_centro["MATRIZ"]][["CIDADE", "ESTADO_UF", "CNPJ_CARGA"]].iloc[0]
     else:
-        idx_maior_consumo = definir_centro["CONSUMO_MWm_MEDIO"].idxmax()
-        centro_decisorio = definir_centro.loc[idx_maior_consumo, ["CIDADE", "ESTADO_UF", "CNPJ_CARGA"]]
+        if not definir_centro.empty and "CONSUMO_MWm_MEDIO" in definir_centro.columns:
+            idx_maior_consumo = definir_centro["CONSUMO_MWm_MEDIO"].idxmax()
+            centro_decisorio = definir_centro.loc[idx_maior_consumo, ["CIDADE", "ESTADO_UF", "CNPJ_CARGA"]]
+        else:
+            centro_decisorio = pd.Series({"CIDADE": "N/A", "ESTADO_UF": "N/A", "CNPJ_CARGA": "N/A"})
 
     resumo_dados = []
 
@@ -280,15 +291,23 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
         # Definir centro decisório
         df_emp_12m["CNPJ_CARGA"] = df_emp_12m["CNPJ_CARGA"].apply(format_cnpj)
         definir_centro = df_emp_12m.copy()
-        definir_centro["MATRIZ"] = definir_centro["CNPJ_CARGA"].apply(lambda x: x[11:15] == "0001")
-        consumo_por_cnpj = definir_centro.groupby("CNPJ_CARGA")["CONSUMO_MWm"].mean().reset_index()
-        definir_centro = definir_centro.merge(consumo_por_cnpj, on="CNPJ_CARGA", suffixes=("", "_MEDIO"))
+        definir_centro["MATRIZ"] = definir_centro["CNPJ_CARGA"].apply(lambda x: x[11:15] == "0001" if len(x) >= 15 else False)
+        
+        # Adicione tratamento para casos vazios
+        if not definir_centro.empty:
+            consumo_por_cnpj = definir_centro.groupby("CNPJ_CARGA")["CONSUMO_MWm"].mean().reset_index()
+            definir_centro = definir_centro.merge(consumo_por_cnpj, on="CNPJ_CARGA", suffixes=("", "_MEDIO"))
 
-        if definir_centro["MATRIZ"].any():
-            centro = definir_centro[definir_centro["MATRIZ"]][["CIDADE", "ESTADO_UF", "CNPJ_CARGA"]].iloc[0]
+            if definir_centro["MATRIZ"].any():
+                centro = definir_centro[definir_centro["MATRIZ"]][["CIDADE", "ESTADO_UF", "CNPJ_CARGA"]].iloc[0]
+            else:
+                if "CONSUMO_MWm_MEDIO" in definir_centro.columns:
+                    idx_maior_consumo = definir_centro["CONSUMO_MWm_MEDIO"].idxmax()
+                    centro = definir_centro.loc[idx_maior_consumo, ["CIDADE", "ESTADO_UF", "CNPJ_CARGA"]]
+                else:
+                    centro = pd.Series({"CIDADE": "N/A", "ESTADO_UF": "N/A", "CNPJ_CARGA": "N/A"})
         else:
-            idx_maior_consumo = definir_centro["CONSUMO_MWm_MEDIO"].idxmax()
-            centro = definir_centro.loc[idx_maior_consumo, ["CIDADE", "ESTADO_UF", "CNPJ_CARGA"]]
+            centro = pd.Series({"CIDADE": "N/A", "ESTADO_UF": "N/A", "CNPJ_CARGA": "N/A"})
 
         resumo_dados.append({
             "Empresa": empresa,
@@ -331,24 +350,29 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
 
     for unidade in unidades:
         df_unidade = df_ultimos_12_meses[df_ultimos_12_meses["SIGLA_PARCELA_CARGA"] == unidade]
-        cnpj = df_unidade["CNPJ_CARGA"].iloc[0]
-        cidade = df_unidade["CIDADE"].iloc[0]
-        estado = df_unidade["ESTADO_UF"].iloc[0]
-        submercado = df_unidade["SUBMERCADO"].iloc[0]
-        capacidade = df_unidade["CAPACIDADE_CARGA"].iloc[0]
-        consumo_12m = df_unidade["CONSUMO_MWm"].mean()
+        if not df_unidade.empty:
+            cnpj = df_unidade["CNPJ_CARGA"].iloc[0]
+            cidade = df_unidade["CIDADE"].iloc[0]
+            estado = df_unidade["ESTADO_UF"].iloc[0]
+            submercado = df_unidade["SUBMERCADO"].iloc[0]
+            capacidade = df_unidade["CAPACIDADE_CARGA"].iloc[0]
+            consumo_12m = df_unidade["CONSUMO_MWm"].mean()
 
-        dados_unidades.append({
-            "Unidade": unidade,
-            "CNPJ": cnpj,
-            "Cidade": cidade,
-            "Estado": estado,
-            "Submercado": submercado,
-            "Demanda": capacidade,
-            "Consumo 12m (MWm)": round(consumo_12m, 2)
-        })
+            dados_unidades.append({
+                "Unidade": unidade,
+                "CNPJ": cnpj,
+                "Cidade": cidade,
+                "Estado": estado,
+                "Submercado": submercado,
+                "Demanda": capacidade,
+                "Consumo 12m (MWm)": round(consumo_12m, 2)
+            })
 
     tabela_unidades = pd.DataFrame(dados_unidades)
 
-    st.write("### 🏭 Detalhamento por Unidade")
-    st.dataframe(tabela_unidades, hide_index=True)
+    if not tabela_unidades.empty:
+        st.write("### 🏭 Detalhamento por Unidade")
+        st.dataframe(tabela_unidades, hide_index=True)
+    else:
+        st.write("### 🏭 Detalhamento por Unidade")
+        st.write("Não há dados disponíveis para as unidades no período selecionado.")
