@@ -7,7 +7,6 @@ openpyxl
 time
 re
 calendar
-plotly
 
 
 
