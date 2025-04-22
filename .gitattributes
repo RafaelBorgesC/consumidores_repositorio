@@ -1,3 +1,0 @@
-base_de_dado_filtrada_v3.xlsx filter=lfs diff=lfs merge=lfs -text
-base_de_dados_filtrada_v3.xlsx filter=lfs diff=lfs merge=lfs -text
-consumo/* filter=lfs diff=lfs merge=lfs -text
