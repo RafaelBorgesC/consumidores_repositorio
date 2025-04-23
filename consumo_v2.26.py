@@ -216,14 +216,14 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     media_anuais["Variação (%)"] = media_anuais["Média Mensal de Consumo (MWm)"].pct_change() * 100
 
     st.subheader("📈 Crescimento Anual do Consumo")
-    st.dataframe(
-        media_anuais.style.format({
-            "Média Mensal de Consumo (MWm)": "{:.2f}",
-            "Variação (%)": "{:+.2f} %"
-        }),
-        use_container_width=False,
-        hide_index=True
-    )
+    #st.dataframe(
+    #    media_anuais.style.format({
+    #        "Média Mensal de Consumo (MWm)": "{:.2f}",
+    #        "Variação (%)": "{:+.2f} %"
+    #    }),
+    #    use_container_width=False,
+    #    hide_index=True
+    #)
     
     # Filtrar empresas selecionadas
     if empresas_selecionadas:
