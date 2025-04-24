@@ -6,9 +6,11 @@ import requests
 import time
 from calendar import monthrange
 import re
+import psutil
 
 st.set_page_config(layout="wide")
 st.title("📊 Análise de Consumo de Energia")
+st.write("RAM usada (MB):", psutil.Process().memory_info().rss / 1e6)
 
 # URLs das APIs
 
