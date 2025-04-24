@@ -1,6 +1,8 @@
 pandas
 numpy
 streamlit
+gc
+os
 plotly
 psutil
 requests
