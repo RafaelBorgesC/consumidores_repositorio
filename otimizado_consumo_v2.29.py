@@ -11,10 +11,21 @@ import gc  # Garbage collector
 import os
 
 # Configuração da página
-st.set_page_config(layout="wide",initial_sidebar_state="collapsed")
+st.set_page_config(
+    layout="wide", 
+    initial_sidebar_state="collapsed", 
+    page_title="Análise de Consumo de Energia", 
+    page_icon="⚡", 
+    menu_items={'About': "Análise de Consumo de Energia - CCEE\n\n"}
+    
+    )
+#st.markdown("<style>body{background-color: #f0f2f5;}</style>", unsafe_allow_html=True)
 st.title("📊 Análise de Consumo de Energia")
 st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
-
+st.sidebar.title("Analise de dados da API")
+with st.sidebar:
+    st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
+st.sidebar.write("Versão: 2.29")
 # ------- OTIMIZAÇÕES DE MEMÓRIA -------
 
 # Função para otimizar tipos de dados em um DataFrame
@@ -326,7 +337,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
         df_2024 = processar_arquivo("base_de_dados_nacional_2024_final.json", 2024, empresa, data_inicio, data_fim)
         df_2025 = processar_arquivo(base_url_2025, 2025, empresa, data_inicio, data_fim)
          
-        st.sidebar.title("Analise de dados da API")
+        
         # Diagnóstico dos dados da API
         with st.sidebar.expander("Diagnóstico dos dados da API"):
             st.write(f"Shape dos dados da API: {df_2025.shape}")
