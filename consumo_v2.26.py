@@ -11,10 +11,10 @@ st.set_page_config(layout="wide")
 st.title("📊 Análise de Consumo de Energia")
 
 # URLs das APIs
-#resource_id_2024 = "b854f7bc-94a3-423a-96b7-2d4756ec77d1"
+
 resource_id_2025 = "c88d04a6-fe42-413b-b7bf-86e390494fb0"
 
-#base_url_2024 = f"https://dadosabertos.ccee.org.br/api/3/action/datastore_search?resource_id={resource_id_2024}"
+
 base_url_2025 = f"https://dadosabertos.ccee.org.br/api/3/action/datastore_search?resource_id={resource_id_2025}"
 
 @st.cache_data(show_spinner=True)
@@ -66,15 +66,10 @@ def carregar_json(nome_arquivo, ano):
     return df
 
 # Status carregamento
-#df_2025 = carregar_dados(base_url_2025, 2025)
-#df_2024_api = carregar_dados(base_url_2024, 2024)
+df_2025 = carregar_dados(base_url_2025, 2025)
 
-# Remover abril/2024 dos dados da API (Está na base XLSX.)
-#df_2024_api["MES_REFERENCIA"] = pd.to_datetime(df_2024_api["MES_REFERENCIA"], dayfirst=True, errors="coerce")
-#df_2024_api = df_2024_api[df_2024_api["MES_REFERENCIA"].dt.month != 4]
 
-#df_xlsx_2024 = carregar_json("base_de_dados_nacional_2024_final.json", 2024)
-#df_2024 = pd.concat([df_xlsx_2024, df_2024_api], ignore_index=True)
+df_xlsx_2024 = carregar_json("base_de_dados_nacional_2024_final.json", 2024)
 df_xlsx_2023 = carregar_json("base_de_dados_nacional_2023_split.json", 2023)
 df_xlsx_2022 = carregar_json("base_de_dados_nacional_2022_split.json", 2022)
 
