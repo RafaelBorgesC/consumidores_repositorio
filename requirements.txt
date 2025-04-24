@@ -1,10 +1,6 @@
 pandas
 numpy
 streamlit
-gc
-os
 plotly
 psutil
 requests
-python-time
-python-calendar
