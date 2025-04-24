@@ -11,10 +11,10 @@ import gc  # Garbage collector
 import os
 
 # Configuração da página
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide",initial_sidebar_state="collapsed")
 st.title("📊 Análise de Consumo de Energia")
 st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
-#st.sidebar.metric("Uso de memória atual", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
+
 # ------- OTIMIZAÇÕES DE MEMÓRIA -------
 
 # Função para otimizar tipos de dados em um DataFrame
@@ -190,7 +190,7 @@ def carregar_dados_api(url, ano, empresa=None, data_inicio=None, data_fim=None, 
         while request_count < max_requests:
             try:
                 current_url = f"{api_url}&limit={limit}&offset={offset}"
-                st.write(f"Consultando API: {current_url}") # Temporário para debug
+                #st.write(f"Consultando API: {current_url}") # Temporário para debug
                 
                 response = requests.get(current_url, timeout=30)
                 response.raise_for_status()
@@ -219,7 +219,7 @@ def carregar_dados_api(url, ano, empresa=None, data_inicio=None, data_fim=None, 
     if not df.empty and empresa and "NOME_EMPRESARIAL" in df.columns:
         # Manter apenas registros com nome exato da empresa
         df = df[df["NOME_EMPRESARIAL"] == empresa]
-        st.write(f"Após filtro exato por '{empresa}': {df.shape[0]} registros")
+        #st.write(f"Após filtro exato por '{empresa}': {df.shape[0]} registros")
     
     if not df.empty and "MES_REFERENCIA" in df.columns:
         df["MES_REFERENCIA"] = df["MES_REFERENCIA"].astype(str)
@@ -325,15 +325,16 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
         df_2023 = processar_arquivo("base_de_dados_nacional_2023_split.json", 2023, empresa, data_inicio, data_fim)
         df_2024 = processar_arquivo("base_de_dados_nacional_2024_final.json", 2024, empresa, data_inicio, data_fim)
         df_2025 = processar_arquivo(base_url_2025, 2025, empresa, data_inicio, data_fim)
-
+         
+        st.sidebar.title("Analise de dados da API")
         # Diagnóstico dos dados da API
-        with st.expander("Diagnóstico dos dados da API"):
+        with st.sidebar.expander("Diagnóstico dos dados da API"):
             st.write(f"Shape dos dados da API: {df_2025.shape}")
             
             if not df_2025.empty:
                 st.write(f"Colunas disponíveis na API: {df_2025.columns.tolist()}")
                 st.write(f"Amostra dos dados da API:")
-                st.dataframe(df_2025.head(3))
+                st.dataframe(df_2025.head(df_2025.shape[0]))
                 
                 if "MES_REFERENCIA" in df_2025.columns:
                     st.write(f"Período dos dados: {df_2025['MES_REFERENCIA'].min()} a {df_2025['MES_REFERENCIA'].max()}")
@@ -348,7 +349,6 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
                     st.warning("Nenhuma coluna de consumo encontrada nos dados da API")
             else:
                 st.warning("Nenhum dado retornado da API")
-         
 
         # Combinar dados da empresa
         df_empresa = pd.concat([df_2022, df_2023, df_2024, df_2025], ignore_index=True)
