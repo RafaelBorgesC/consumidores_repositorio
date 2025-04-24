@@ -70,11 +70,11 @@ df_2025 = carregar_dados(base_url_2025, 2025)
 
 
 df_xlsx_2024 = carregar_json("base_de_dados_nacional_2024_final.json", 2024)
-df_xlsx_2023 = carregar_json("base_de_dados_nacional_2023_split.json", 2023)
-df_xlsx_2022 = carregar_json("base_de_dados_nacional_2022_split.json", 2022)
+#df_xlsx_2023 = carregar_json("base_de_dados_nacional_2023_split.json", 2023)
+#df_xlsx_2022 = carregar_json("base_de_dados_nacional_2022_split.json", 2022)
 
 # Consolidar tudo
-df_total = pd.concat([df_xlsx_2022, df_xlsx_2023], ignore_index=True)
+df_total = pd.concat([df_xlsx_2024, df_2025], ignore_index=True)
 df_total["MES_REFERENCIA"] = pd.to_datetime(df_total["MES_REFERENCIA"], dayfirst=True, format="%d/%m/%Y")
 df_total_ord = df_total.sort_values(by="MES_REFERENCIA", ascending=False)
 
