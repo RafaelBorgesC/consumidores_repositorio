@@ -19,7 +19,7 @@ resource_id_2025 = "c88d04a6-fe42-413b-b7bf-86e390494fb0"
 
 base_url_2025 = f"https://dadosabertos.ccee.org.br/api/3/action/datastore_search?resource_id={resource_id_2025}"
 
-@st.cache_data(show_spinner=True)
+@st.cache_data(show_spinner=False)
 def carregar_dados(url, ano, max_requests=50, max_retries=5, max_empty_responses=3):
     all_records = []
     limit = 10000
@@ -61,7 +61,7 @@ def carregar_dados(url, ano, max_requests=50, max_retries=5, max_empty_responses
     
     return df
 
-@st.cache_data(show_spinner=True)
+@st.cache_data(show_spinner=False)
 def carregar_json(nome_arquivo, ano):
     with st.spinner(f"Carregando dados de {ano}..."):
         df = pd.read_json(nome_arquivo, orient="split", compression="gzip")
