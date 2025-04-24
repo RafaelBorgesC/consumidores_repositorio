@@ -2,6 +2,7 @@ pandas
 numpy
 streamlit
 plotly
+psutil
 requests
 python-time
 python-calendar
