@@ -25,7 +25,7 @@ st.title("📊 Análise de Consumo de Energia")
 st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.metric("Uso de CPU", f"{psutil.cpu_percent(interval=1)} %")
 st.sidebar.title("Analise de dados da API")
-st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
+st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
 st.sidebar.write("Versão: 2.29")
 # ------- OTIMIZAÇÕES DE MEMÓRIA -------
 
