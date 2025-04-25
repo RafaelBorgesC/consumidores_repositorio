@@ -23,7 +23,7 @@ st.set_page_config(
 st.title("📊 Análise de Consumo de Energia")
 st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.title("Analise de dados da API")
-st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
+#st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.write("Versão: 2.29")
 # ------- OTIMIZAÇÕES DE MEMÓRIA -------
 
