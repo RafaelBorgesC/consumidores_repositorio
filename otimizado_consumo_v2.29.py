@@ -16,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed", 
     page_title="Análise de Consumo de Energia", 
     page_icon="⚡", 
-    menu_items={'About': "Análise de Consumo de Energia - CCEE\n\n"}
+    menu_items={'Sobre': "Análise de Consumo de Energia - CCEE\n\n"}
     
     )
 #st.markdown("<style>body{background-color: #f0f2f5;}</style>", unsafe_allow_html=True)
