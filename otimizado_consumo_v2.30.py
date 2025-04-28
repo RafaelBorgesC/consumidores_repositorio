@@ -24,9 +24,8 @@ st.title("📊 Análise de Consumo de Energia")
 #st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.metric("Uso de CPU", f"{psutil.cpu_percent(interval=1)} %")
-st.sidebar.title("Analise de dados da API")
-st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-st.sidebar.write("Versão: 2.29")
+#st.sidebar.title("Analise de dados da API")
+
 #st.sidebar.slider("Ajuste o uso de memória", min_value=1, max_value=100, value=30, step=1)
 #st.sidebar.write("Ajuste o uso de memória para otimizar o desempenho do aplicativo.")
 
@@ -364,7 +363,8 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
                     st.warning("Nenhuma coluna de consumo encontrada nos dados da API")
             else:
                 st.warning("Nenhum dado retornado da API")
-
+st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+st.sidebar.write("Versão: 2.29")
         # Combinar dados da empresa
         df_empresa = pd.concat([df_2022, df_2023, df_2024, df_2025], ignore_index=True)
         
