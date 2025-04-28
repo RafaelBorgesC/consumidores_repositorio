@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import requests
 import time
 from calendar import monthrange
+#import re
 import psutil  # Para monitorar o uso de memória
 import gc  # Garbage collector
 import os
@@ -21,9 +22,12 @@ st.set_page_config(
 #st.markdown("<style>body{background-color: #f0f2f5;}</style>", unsafe_allow_html=True)
 st.title("📊 Análise de Consumo de Energia")
 #st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
+
+
 st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.metric("Uso de CPU", f"{psutil.cpu_percent(interval=1)} %")
 #st.sidebar.title("Analise de dados da API")
+
 
 #st.sidebar.slider("Ajuste o uso de memória", min_value=1, max_value=100, value=30, step=1)
 #st.sidebar.write("Ajuste o uso de memória para otimizar o desempenho do aplicativo.")
@@ -351,7 +355,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
                 
                 if "MES_REFERENCIA" in df_2025.columns:
                     st.write(f"Período dos dados: {df_2025['MES_REFERENCIA'].min()} a {df_2025['MES_REFERENCIA'].max()}")
-                
+                  
                 # Verificar coluna de consumo
                 consumo_cols = [col for col in df_2025.columns if "CONSUMO" in col.upper()]
                 if consumo_cols:
@@ -605,7 +609,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
         ),
         hovermode="x unified",
         height=600,  # Aumentado para melhor visualização
-        yaxis=dict(showgrid=True, gridcolor="rgba(230, 230, 230, 0.5)")
+        yaxis=dict(showgrid=False)  # Mudança aqui: de True para False
     )
     
     st.plotly_chart(fig, use_container_width=True)
@@ -770,6 +774,10 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     clear_memory()
 else:
     st.info("Selecione pelo menos uma empresa e clique em 'Gerar Gráfico' para visualizar os dados.")
+x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
 
-st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-st.sidebar.write("Versão: 2.30")
+col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
+with col1:
+    versao = st.write("Versão: 2.30", unsafe_allow_html=True)
+with col2:
+    logo = st.image("https://media.glassdoor.com/sqll/7562/eletrobras-squarelogo-1569494984490.png", width=20)
