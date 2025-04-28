@@ -5,7 +5,6 @@ import plotly.graph_objects as go
 import requests
 import time
 from calendar import monthrange
-import re
 import psutil  # Para monitorar o uso de memória
 import gc  # Garbage collector
 import os
@@ -16,17 +15,18 @@ st.set_page_config(
     initial_sidebar_state="collapsed", 
     page_title="Análise de Consumo de Energia", 
     page_icon="⚡", 
-    #menu_items={'Sobre': "Análise de Consumo de Energia - CCEE\n\n"}
+    #menu_items={'About': "Análise de Consumo de Energia - CCEE\n\n"}
     
     )
 #st.markdown("<style>body{background-color: #f0f2f5;}</style>", unsafe_allow_html=True)
 st.title("📊 Análise de Consumo de Energia")
-#st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
+
 st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.metric("Uso de CPU", f"{psutil.cpu_percent(interval=1)} %")
-st.sidebar.title("Analise de dados da API")
-st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-st.sidebar.write("Versão: 2.29")
+#st.sidebar.write("Versão: 2.29")
+#st.sidebar.slider("Ajuste o uso de memória", min_value=1, max_value=100, value=30, step=1)
+#st.sidebar.write("Ajuste o uso de memória para otimizar o desempenho do aplicativo.")
+
 # ------- OTIMIZAÇÕES DE MEMÓRIA -------
 
 # Função para otimizar tipos de dados em um DataFrame
@@ -459,9 +459,16 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     anos = df_mensal["Ano_Mes"].dt.year.unique()
     linhas_verticais = []
     for ano in anos[:-1]:
-        dezembro = pd.Timestamp(f"{ano}-12-15")
-        janeiro = pd.Timestamp(f"{ano+1}-01-15")
+        # Encontrar o último mês do ano e o primeiro mês do próximo ano
+        dezembro = df_mensal[df_mensal["Ano_Mes"].dt.year == ano]
+        dezembro = dezembro[dezembro["Ano_Mes"].dt.month == 12]["Ano_Mes"].iloc[0] if not dezembro[dezembro["Ano_Mes"].dt.month == 12].empty else pd.Timestamp(f"{ano}-12-01")
+        
+        janeiro = df_mensal[df_mensal["Ano_Mes"].dt.year == ano+1]
+        janeiro = janeiro[janeiro["Ano_Mes"].dt.month == 1]["Ano_Mes"].iloc[0] if not janeiro[janeiro["Ano_Mes"].dt.month == 1].empty else pd.Timestamp(f"{ano+1}-01-01")
+        
+        # Posicionar a linha exatamente entre as colunas
         meio = dezembro + (janeiro - dezembro) / 2
+        
         linhas_verticais.append(
             dict(
                 type="line",
@@ -642,11 +649,17 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
             
             if dados_unidades:
                 tabela_unidades = pd.DataFrame(dados_unidades)
-                st.write("🏭 Ver Detalhamento por Unidade")
-                st.dataframe(tabela_unidades, hide_index=True)
+                with st.expander("🏭 Ver Detalhamento por Unidade"):
+                    st.dataframe(tabela_unidades, hide_index=True)
 
     
     # Liberar memória ao final
     clear_memory()
 else:
     st.info("Selecione pelo menos uma empresa e clique em 'Gerar Gráfico' para visualizar os dados.")
+x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
+with col1:
+    versao = st.write("Versão: 2.30", unsafe_allow_html=True)
+with col2:
+    logo = st.image("https://media.glassdoor.com/sqll/7562/eletrobras-squarelogo-1569494984490.png", width=20)
