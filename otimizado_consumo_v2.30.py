@@ -373,8 +373,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
         # Liberar memória
         del df_2022, df_2023, df_2024, df_2025, df_empresa
         clear_memory()
-    st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-    st.sidebar.write("Versão: 2.29")
+
     progress_bar.progress(1.0)
     progress_text.text("Processamento concluído!")
     
@@ -772,3 +771,5 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     clear_memory()
 else:
     st.info("Selecione pelo menos uma empresa e clique em 'Gerar Gráfico' para visualizar os dados.")
+st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+st.sidebar.write("Versão: 2.29")
