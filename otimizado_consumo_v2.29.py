@@ -662,5 +662,5 @@ x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br
 col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
 with col1:
     versao = st.write("Versão: 2.30", unsafe_allow_html=True)
-with col2:
-    logo = st.image("https://media.glassdoor.com/sqll/7562/eletrobras-squarelogo-1569494984490.png", width=20)
+
+
