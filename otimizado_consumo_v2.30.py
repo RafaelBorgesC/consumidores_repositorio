@@ -771,5 +771,6 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     clear_memory()
 else:
     st.info("Selecione pelo menos uma empresa e clique em 'Gerar Gráfico' para visualizar os dados.")
+
 st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
 st.sidebar.write("Versão: 2.30")
