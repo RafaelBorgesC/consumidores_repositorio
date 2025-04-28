@@ -363,8 +363,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
                     st.warning("Nenhuma coluna de consumo encontrada nos dados da API")
             else:
                 st.warning("Nenhum dado retornado da API")
-st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-st.sidebar.write("Versão: 2.29")
+
         # Combinar dados da empresa
         df_empresa = pd.concat([df_2022, df_2023, df_2024, df_2025], ignore_index=True)
         
@@ -374,7 +373,8 @@ st.sidebar.write("Versão: 2.29")
         # Liberar memória
         del df_2022, df_2023, df_2024, df_2025, df_empresa
         clear_memory()
-    
+    st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+    st.sidebar.write("Versão: 2.29")
     progress_bar.progress(1.0)
     progress_text.text("Processamento concluído!")
     
