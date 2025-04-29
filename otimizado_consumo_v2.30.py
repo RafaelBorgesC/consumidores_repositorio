@@ -107,7 +107,7 @@ def carregar_nomes_empresas():
     return sorted(list(empresas))
 
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, ttl=3600)  # Cache expira após 1 hora
 def obter_informacoes_base():
     """Obtém informações básicas da base de dados sem carregar todos os registros."""
     info = {
@@ -186,7 +186,7 @@ def obter_informacoes_base():
     
     return info
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, ttl=3600)  # Cache expira após 1 hora
 def carregar_dados_api(url, ano, empresa=None, data_inicio=None, data_fim=None, max_requests=50):
     """Carrega dados da API com filtros aplicados."""
     all_records = []
@@ -553,9 +553,16 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     anos = df_total_mensal["Ano_Mes"].dt.year.unique()
     linhas_verticais = []
     for ano in anos[:-1]:
-        dezembro = pd.Timestamp(f"{ano}-12-15")
-        janeiro = pd.Timestamp(f"{ano+1}-01-15")
+
+        # Encontrar o último mês do ano e o primeiro mês do próximo ano
+        dezembro = df_total_mensal[df_total_mensal["Ano_Mes"].dt.year == ano]
+        dezembro = dezembro[dezembro["Ano_Mes"].dt.month == 12]["Ano_Mes"].iloc[0] if not dezembro[dezembro["Ano_Mes"].dt.month == 12].empty else pd.Timestamp(f"{ano}-12-01")
+        
+        janeiro = df_total_mensal[df_total_mensal["Ano_Mes"].dt.year == ano+1]
+        janeiro = janeiro[janeiro["Ano_Mes"].dt.month == 1]["Ano_Mes"].iloc[0] if not janeiro[janeiro["Ano_Mes"].dt.month == 1].empty else pd.Timestamp(f"{ano+1}-01-01")
         meio = dezembro + (janeiro - dezembro) / 2
+
+
         linhas_verticais.append(
             dict(
                 type="line",
