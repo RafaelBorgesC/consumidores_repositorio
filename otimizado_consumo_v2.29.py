@@ -650,7 +650,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
             
             if dados_unidades:
                 tabela_unidades = pd.DataFrame(dados_unidades)
-                st.write("🏭 Ver Detalhamento por Unidade")
+                st.write("### 🏭 Ver Detalhamento por Unidade")
                 st.dataframe(tabela_unidades, hide_index=True)
 
     
