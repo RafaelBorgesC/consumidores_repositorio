@@ -429,7 +429,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
         y=df_mensal["CONSUMO_MWm"],
         name="Consumo Mensal (MWm)",
         marker_color=cores_barras,
-        hovertemplate="Mês: %{x|%b-%Y}<br>Consumo: %{y:.2f} MWm<extra></extra>"
+        hovertemplate="Empresa: %s<br>Mês: %%{x|%%m-%%Y}<br>Consumo: %%{y:.2f} MWm<extra></extra>" % empresa
     ))
     
     fig.add_trace(go.Scatter(
@@ -650,8 +650,8 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
             
             if dados_unidades:
                 tabela_unidades = pd.DataFrame(dados_unidades)
-                st.title("🏭 Ver Detalhamento por Unidade")
-                st.dataframe(tabela_unidades, hide_index=True)
+                with st.expander("🏭 Ver Detalhamento por Unidade"):
+                    st.dataframe(tabela_unidades, hide_index=True)
 
     
     # Liberar memória ao final
@@ -662,5 +662,3 @@ x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br
 col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
 with col1:
     versao = st.write("Versão: 2.30", unsafe_allow_html=True)
-
-
