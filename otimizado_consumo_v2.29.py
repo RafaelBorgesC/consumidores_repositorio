@@ -661,4 +661,4 @@ else:
 x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
 col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
 with col1:
-    versao = st.write("Versão: 2.30", unsafe_allow_html=True)
+    versao = st.write("Versão: 2.29", unsafe_allow_html=True)
