@@ -539,24 +539,24 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     
     # Adicionar linhas de limite e média
     fig.add_trace(go.Scatter(
-        x=df_total_mensal["Ano_Mes"],
-        y=[media_consumo_ajustada]*len(df_total_mensal),
+        x=pivot_meses,  # Em vez de df_total_mensal["Ano_Mes"]
+        y=[media_consumo_ajustada]*len(pivot_meses),
         mode="lines",
         name=f"Média: {media_consumo_ajustada:.2f}",
         line=dict(color="green", dash="dash", width=2)
     ))
     
     fig.add_trace(go.Scatter(
-        x=df_total_mensal["Ano_Mes"],
-        y=[lim_sup_user]*len(df_total_mensal),
+        x=pivot_meses,  # Em vez de df_total_mensal["Ano_Mes"]
+        y=[lim_sup_user]*len(pivot_meses),
         mode="lines",
         name=f"Limite Superior (+{flex_user}%): {lim_sup_user:.2f}",
         line=dict(color="orange", dash="dot", width=2)
     ))
     
     fig.add_trace(go.Scatter(
-        x=df_total_mensal["Ano_Mes"],
-        y=[lim_inf_user]*len(df_total_mensal),
+        x=pivot_meses,  # Em vez de df_total_mensal["Ano_Mes"]
+        y=[lim_inf_user]*len(pivot_meses),
         mode="lines",
         name=f"Limite Inferior (-{flex_user}%): {lim_inf_user:.2f}",
         line=dict(color="orange", dash="dot", width=2)
