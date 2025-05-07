@@ -298,8 +298,8 @@ if info_base["data_mais_antiga"] is not None and info_base["data_mais_recente"] 
     mes_mais_recente = info_base["data_mais_recente"].strftime("%m/%Y")
     st.success(f"Base de Dados Atualizada ({mes_mais_antigo} até {mes_mais_recente})")
 
-if info_base["total_registros"] > 0:
-    st.write(f"Base completa tem {info_base['total_registros']} registros.")
+#if info_base["total_registros"] > 0:
+#    st.write(f"Base completa tem {info_base['total_registros']} registros.")
 # Inputs
 empresas_selecionadas = st.multiselect(
     "Selecione as empresas desejadas",
