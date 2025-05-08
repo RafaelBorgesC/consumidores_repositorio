@@ -546,7 +546,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
                 y=dados_y,
                 name=empresa,
                 marker_color=cores_barras,
-                hovertemplate="Consumo: %{y:.2f} MWm<extra></extra>"
+                hovertemplate="Empresa: %s <br> Consumo: %{y:.2f} MWm<extra></extra>" % empresa
             ))
     
     # Configurar como empilhado apenas se tivermos múltiplas empresas
