@@ -20,9 +20,9 @@ st.set_page_config(
     
     )
 #st.markdown("<style>body{background-color: #f0f2f5;}</style>", unsafe_allow_html=True)
-st.title("📊 Análise de Consumo de Energia")
+st.title("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📊 **Análise de Consumo de Energia**")
 #st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
-
+st.markdown("<br>",unsafe_allow_html=True)  # Espaço em branco
 
 st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.sidebar.metric("Uso de CPU", f"{psutil.cpu_percent(interval=1)} %")
@@ -308,13 +308,17 @@ empresas_selecionadas = st.multiselect(
     placeholder="Selecione as empresas desejadas"
 )
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1], gap='small', )
 with col1:
-    data_inicio = st.date_input("Data inicial", value=pd.to_datetime("2022-01-01"))
+    data_inicio = st.date_input("Data inicial", value=pd.to_datetime("2022-01-01"),format='DD/MM/YYYY')
 with col2:
-    data_fim = st.date_input("Data final", value=info_base["data_mais_recente"])
+    data_fim = st.date_input("Data final", value=info_base["data_mais_recente"], format='DD/MM/YYYY')
 with col3:
     flex_user = st.slider("Flexibilidade (%)", min_value=1, max_value=100, value=30)
+with col4:
+    st.markdown("<br/>", unsafe_allow_html=True)  # Espaço em branco
+    mostrar_contornos = st.checkbox("Mostrar contornos", value=False, 
+                                    help="Habilita contornos coloridos que destacam cada empresa nas barras empilhadas")
 
 # ------- PROCESSAMENTO DE DADOS -------
 
@@ -335,7 +339,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     
     for i, empresa in enumerate(empresas_selecionadas):
         progress_text.text(f"Processando dados para: {empresa}")
-        progress_bar.progress((i / len(empresas_selecionadas)))
+        progress_bar.progress(i)
         
         # Carregar dados de cada fonte
         df_2022 = processar_arquivo("base_de_dados_nacional_2022.parquet", 2022, empresa, data_inicio, data_fim)
@@ -509,17 +513,29 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
         
         # Configurações específicas baseadas no número de empresas
         if multiplas_empresas:
-            # Com múltiplas empresas: usar barras com pequenas separações
+            # Definir contorno com base na preferência do usuário
+            cor_contorno_atual = cores_contorno[i % len(cores_contorno)]
+            
+            # Configurar linha de contorno condicional
+            if mostrar_contornos:
+                linha_contorno = dict(
+                    color=cor_contorno_atual,  # Cor do contorno específica para empresa
+                    width=1.5                  # Largura fina mas visível
+                )
+            else:
+                linha_contorno = dict(
+                    color="rgba(0,0,0,0)",  # Cor completamente transparente
+                    width=0                 # Largura zero - remove completamente a linha
+                )
+            
+            # Com múltiplas empresas: usar barras com contornos coloridos
             fig.add_trace(go.Bar(
                 x=dados_x,
                 y=dados_y,
                 name=empresa,
                 marker=dict(
                     color=cores_barras,
-                    line=dict(
-                        color="white",  # Linha branca fina para separar
-                        width=0.5       # Linha muito fina, apenas para criar separação visual
-                    )
+                    line=linha_contorno
                 ),
                 hovertemplate="Empresa: %s<br>Consumo: %%{y:.2f} MWm<extra></extra>" % empresa
             ))
@@ -618,7 +634,14 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     
     # Definir o título com base no número de empresas
     if multiplas_empresas:
-        titulo_grafico = "Histórico de Consumo Mensal - Empresas Empilhadas"
+        # Limitar a quantidade de empresas exibidas no título para evitar títulos muito longos
+        if len(empresas_selecionadas) <= 4:
+            empresas_titulo = " + ".join(empresas_selecionadas)
+            titulo_grafico = f"Histórico de Consumo Mensal - {empresas_titulo}"
+        else:
+            # Se houver mais de 3 empresas, mostrar as primeiras 2 e indicar quantas mais
+            empresas_titulo = f"{' + '.join(empresas_selecionadas[:2])} e mais {len(empresas_selecionadas)-2}"
+            titulo_grafico = f"Histórico de Consumo Mensal - {empresas_titulo}"
     else:
         titulo_grafico = f"Histórico de Consumo Mensal - {empresas_selecionadas[0]}"
     
