@@ -194,41 +194,41 @@ def carregar_dados_api(url, ano, empresa=None, data_inicio=None, data_fim=None, 
     offset = 0
     request_count = 0
     
-    with st.spinner(f"Carregando dados de {ano} da API..."):
-        api_url = url
-        if empresa:
-            # Extrair parte do nome para consultar a API (evita problemas com aspas e caracteres especiais)
-            # Pegando apenas os primeiros 20 caracteres ou até o primeiro espaço como filtro aproximado
-            empresa_simples = empresa.split()[0][:20]
-            
-            # Adicionar filtro aproximado na consulta da API
-            api_url = f"{url}&q={{\"NOME_EMPRESARIAL\":\"{empresa_simples}\"}}"
+    #with st.spinner(f"Carregando dados de {ano} da API..."):
+    api_url = url
+    if empresa:
+        # Extrair parte do nome para consultar a API (evita problemas com aspas e caracteres especiais)
+        # Pegando apenas os primeiros 20 caracteres ou até o primeiro espaço como filtro aproximado
+        empresa_simples = empresa.split()[0][:20]
         
-        while request_count < max_requests:
-            try:
-                current_url = f"{api_url}&limit={limit}&offset={offset}"
-                #st.write(f"Consultando API: {current_url}") # Temporário para debug
-                
-                response = requests.get(current_url, timeout=30)
-                response.raise_for_status()
-                data = response.json()
-                records = data.get("result", {}).get("records", [])
-                
-                if not records:
-                    break
-                
-                all_records.extend(records)
-                offset += limit
-                request_count += 1
-                
-                # Se não houver mais dados, pare
-                if len(records) < limit:
-                    break
-                    
-            except requests.exceptions.RequestException as e:
-                st.warning(f"Erro ao carregar dados da API: {e}")
-                time.sleep(2)
+        # Adicionar filtro aproximado na consulta da API
+        api_url = f"{url}&q={{\"NOME_EMPRESARIAL\":\"{empresa_simples}\"}}"
+    
+    while request_count < max_requests:
+        try:
+            current_url = f"{api_url}&limit={limit}&offset={offset}"
+            #st.write(f"Consultando API: {current_url}") # Temporário para debug
+            
+            response = requests.get(current_url, timeout=30)
+            response.raise_for_status()
+            data = response.json()
+            records = data.get("result", {}).get("records", [])
+            
+            if not records:
                 break
+            
+            all_records.extend(records)
+            offset += limit
+            request_count += 1
+            
+            # Se não houver mais dados, pare
+            if len(records) < limit:
+                break
+                
+        except requests.exceptions.RequestException as e:
+            st.warning(f"Erro ao carregar dados da API: {e}")
+            time.sleep(2)
+            break
     
     df = pd.DataFrame(all_records)
     
@@ -251,7 +251,7 @@ def carregar_dados_api(url, ano, empresa=None, data_inicio=None, data_fim=None, 
     
     return optimize_dtypes(df)
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, ttl=3600)  # Cache expira após 1 hora
 def carregar_dados_parquet(nome_arquivo, empresa=None, data_inicio=None, data_fim=None):
     """Carrega dados Parquet com filtros aplicados."""
     if not os.path.exists(nome_arquivo):
@@ -259,25 +259,25 @@ def carregar_dados_parquet(nome_arquivo, empresa=None, data_inicio=None, data_fi
         return pd.DataFrame()
     
     try:
-        with st.spinner(f"Carregando dados de {nome_arquivo}..."):
-            # Ler o arquivo Parquet
-            df = pd.read_parquet(nome_arquivo, engine="pyarrow")
+        #with st.spinner(f"Carregando dados de {nome_arquivo}..."):
+        # Ler o arquivo Parquet
+        df = pd.read_parquet(nome_arquivo, engine="pyarrow")
+        
+        # Filtrar para a empresa desejada se especificada
+        if empresa and "NOME_EMPRESARIAL" in df.columns:
+            df = df[df["NOME_EMPRESARIAL"] == empresa]
+        
+        # Processar datas e aplicar filtros
+        if not df.empty and "MES_REFERENCIA" in df.columns:
+            df["MES_REFERENCIA"] = pd.to_datetime(df["MES_REFERENCIA"], errors="coerce", dayfirst=True)
             
-            # Filtrar para a empresa desejada se especificada
-            if empresa and "NOME_EMPRESARIAL" in df.columns:
-                df = df[df["NOME_EMPRESARIAL"] == empresa]
-            
-            # Processar datas e aplicar filtros
-            if not df.empty and "MES_REFERENCIA" in df.columns:
-                df["MES_REFERENCIA"] = pd.to_datetime(df["MES_REFERENCIA"], errors="coerce", dayfirst=True)
-                
-                # Aplicar filtros de data
-                if data_inicio:
-                    df = df[df["MES_REFERENCIA"] >= pd.to_datetime(data_inicio)]
-                if data_fim:
-                    df = df[df["MES_REFERENCIA"] <= pd.to_datetime(data_fim)]
-            
-            return optimize_dtypes(df)
+            # Aplicar filtros de data
+            if data_inicio:
+                df = df[df["MES_REFERENCIA"] >= pd.to_datetime(data_inicio)]
+            if data_fim:
+                df = df[df["MES_REFERENCIA"] <= pd.to_datetime(data_fim)]
+        
+        return optimize_dtypes(df)
     
     except Exception as e:
         st.error(f"Erro ao carregar {nome_arquivo}: {e}")
@@ -308,21 +308,21 @@ empresas_selecionadas = st.multiselect(
     placeholder="Selecione as empresas desejadas"
 )
 
-col1, col2, col3, col4 = st.columns([1, 1, 1, 1], gap='small', )
+col1, col2, col3 = st.columns([1, 1, 1], gap='small', )
 with col1:
     data_inicio = st.date_input("Data inicial", value=pd.to_datetime("2022-01-01"),format='DD/MM/YYYY')
 with col2:
     data_fim = st.date_input("Data final", value=info_base["data_mais_recente"], format='DD/MM/YYYY')
 with col3:
     flex_user = st.slider("Flexibilidade (%)", min_value=1, max_value=100, value=30)
-with col4:
-    st.markdown("<br/>", unsafe_allow_html=True)  # Espaço em branco
-    mostrar_contornos = st.checkbox("Mostrar contornos", value=False, 
-                                    help="Habilita contornos coloridos que destacam cada empresa nas barras empilhadas")
+#with col4:
 
+mostrar_contornos = st.checkbox("**Mostrar contornos**", value=False, 
+                                    help="Habilita contornos coloridos que destacam cada empresa nas barras empilhadas")
+st.markdown("<br/>", unsafe_allow_html=True)  # Espaço em branco
 # ------- PROCESSAMENTO DE DADOS -------
 
-if st.button("Gerar Gráfico") and empresas_selecionadas:
+if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
     # Agora carregamos dados apenas para as empresas selecionadas
     df_total_filtrado = pd.DataFrame()
     
@@ -339,7 +339,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     
     for i, empresa in enumerate(empresas_selecionadas):
         progress_text.text(f"Processando dados para: {empresa}")
-        progress_bar.progress(i)
+        progress_bar.progress(i / len(empresas_selecionadas))
         
         # Carregar dados de cada fonte
         df_2022 = processar_arquivo("base_de_dados_nacional_2022.parquet", 2022, empresa, data_inicio, data_fim)
@@ -349,7 +349,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
          
         
         # Diagnóstico dos dados da API
-        with st.sidebar.expander("Diagnóstico dos dados da API"):
+        with st.sidebar.expander("Diagnóstico dos dados da API", icon="🔍"):
             st.write(f"Shape dos dados da API: {df_2025.shape}")
             
             if not df_2025.empty:
@@ -546,7 +546,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
                 y=dados_y,
                 name=empresa,
                 marker_color=cores_barras,
-                hovertemplate="Consumo: %{y:.2f} MWm<extra></extra>"
+                hovertemplate="Empresa: %s <br> Consumo: %{y:.2f} MWm<extra></extra>"
             ))
     
     # Configurar como empilhado apenas se tivermos múltiplas empresas
@@ -904,7 +904,7 @@ if st.button("Gerar Gráfico") and empresas_selecionadas:
     # Liberar memória ao final
     clear_memory()
 else:
-    st.info("Selecione pelo menos uma empresa e clique em 'Gerar Gráfico' para visualizar os dados.")
+    st.info("Selecione pelo menos uma empresa e clique em 'Gerar Gráfico' para visualizar os dados.",icon=":material/info:")
 x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
 
 col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
