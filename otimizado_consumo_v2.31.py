@@ -747,9 +747,14 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
     
     # Comparação de crescimento ano a ano
     df_mensal_empresa["Ano"] = df_mensal_empresa["Ano_Mes"].dt.year
-    media_anuais = df_mensal_empresa.groupby("Ano", observed=True)["CONSUMO_MWm"].mean().reset_index()
+
+    # Primeiro somar os consumos de todas as empresas por mês
+    soma_mensal = df_mensal_empresa.groupby(["Ano", "Ano_Mes"], observed=True)["CONSUMO_MWm"].sum().reset_index()
+
+    # Depois calcular a média anual dos meses somados
+    media_anuais = soma_mensal.groupby("Ano", observed=True)["CONSUMO_MWm"].mean().reset_index()
     media_anuais.columns = ["Ano", "Média Mensal de Consumo (MWm)"]
-    
+
     media_anuais["Variação (%)"] = media_anuais["Média Mensal de Consumo (MWm)"].pct_change() * 100
     
     st.subheader("📈 Crescimento Anual do Consumo")
