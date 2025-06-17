@@ -537,7 +537,7 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
                     color=cores_barras,
                     line=linha_contorno
                 ),
-                hovertemplate="Empresa: %s<br>Consumo: %%{y:.2f} MWm<extra></extra>" % empresa
+                hovertemplate="Empresa: %s <br>Consumo: %%{y:.2f} MWm<extra></extra>" % empresa
             ))
         else:
             # Com uma única empresa: manter o estilo original
@@ -546,7 +546,7 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
                 y=dados_y,
                 name=empresa,
                 marker_color=cores_barras,
-                hovertemplate="Empresa: %s <br> Consumo: %{y:.2f} MWm<extra></extra>"
+                hovertemplate="Empresa: %s <br> Consumo: %%{y:.2f} MWm<extra></extra>" % empresa
             ))
     
     # Configurar como empilhado apenas se tivermos múltiplas empresas
@@ -559,7 +559,8 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
         y=[media_consumo_ajustada]*len(pivot_meses),
         mode="lines",
         name=f"Média: {media_consumo_ajustada:.2f}",
-        line=dict(color="green", dash="dash", width=2)
+        line=dict(color="white", dash="dash", width=2),
+        hovertemplate="Média: %.2f MWm<extra></extra>" % media_consumo_ajustada
     ))
     
     fig.add_trace(go.Scatter(
@@ -567,7 +568,8 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
         y=[lim_sup_user]*len(pivot_meses),
         mode="lines",
         name=f"Limite Superior (+{flex_user}%): {lim_sup_user:.2f}",
-        line=dict(color="orange", dash="dot", width=2)
+        line=dict(color="orange", dash="dot", width=2),
+        
     ))
     
     fig.add_trace(go.Scatter(
@@ -575,7 +577,8 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
         y=[lim_inf_user]*len(pivot_meses),
         mode="lines",
         name=f"Limite Inferior (-{flex_user}%): {lim_inf_user:.2f}",
-        line=dict(color="orange", dash="dot", width=2)
+        line=dict(color="orange", dash="dot", width=2),
+        
     ))
     
     # Linhas verticais entre os anos - Versão corrigida
@@ -883,7 +886,8 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
                             ("Cidade", "CIDADE"),
                             ("Estado", "ESTADO_UF"),
                             ("Submercado", "SUBMERCADO"),
-                            ("Demanda", "CAPACIDADE_CARGA")
+                            ("Demanda", "CAPACIDADE_CARGA"),
+                            ("Data de Migração", "DATA_MIGRACAO")
                         ]:
                             if col in df_unidade.columns:
                                 info_unidade[campo] = df_unidade[col].iloc[0]
