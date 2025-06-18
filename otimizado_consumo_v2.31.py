@@ -886,8 +886,8 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
                             ("Cidade", "CIDADE"),
                             ("Estado", "ESTADO_UF"),
                             ("Submercado", "SUBMERCADO"),
-                            ("Demanda", "CAPACIDADE_CARGA"),
-                            ("Data de Migração", "DATA_MIGRACAO")
+                            ("Data de Migração", "DATA_MIGRACAO"),
+                            ("Demanda", "CAPACIDADE_CARGA")
                         ]:
                             if col in df_unidade.columns:
                                 info_unidade[campo] = df_unidade[col].iloc[0]
