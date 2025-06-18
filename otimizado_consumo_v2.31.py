@@ -560,7 +560,7 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
         mode="lines",
         name=f"Média: {media_consumo_ajustada:.2f}",
         line=dict(color="white", dash="dash", width=2),
-        hovertemplate="Média: %.2f MWm<extra></extra>" % media_consumo_ajustada
+        #hovertemplate="Média: %.2f MWm<extra></extra>" % media_consumo_ajustada
     ))
     
     fig.add_trace(go.Scatter(
@@ -569,7 +569,7 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
         mode="lines",
         name=f"Limite Superior (+{flex_user}%): {lim_sup_user:.2f}",
         line=dict(color="orange", dash="dot", width=2),
-        hovertemplate= "Limite Superior: %.2f MWm<extra></extra>" % lim_sup_user
+        #hovertemplate= "Limite Superior: %.2f MWm<extra></extra>" % lim_sup_user
     ))
     
     fig.add_trace(go.Scatter(
@@ -578,7 +578,7 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
         mode="lines",
         name=f"Limite Inferior (-{flex_user}%): {lim_inf_user:.2f}",
         line=dict(color="orange", dash="dot", width=2),
-        hovertemplate= "Limite Inferior: %.2f MWm<extra></extra>" % lim_inf_user
+        #hovertemplate= "Limite Inferior: %.2f MWm<extra></extra>" % lim_inf_user
     ))
     
     # Linhas verticais entre os anos - Versão corrigida
