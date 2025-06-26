@@ -1,6 +1,6 @@
 Link do app: https://consumidores.streamlit.app/
 
-Este repositório contém um aplicativo desenvolvido para auxiliar na análise de consumo de energia com base nos dados da CCEE (Câmara de Comercialização de Energia Elétrica). A ferramenta é voltada especialmente para comercializadoras, consultores ou consumidores que precisam identificar qual flexibilidade aplicar de acordo com o histórico de consumo dos clientes na NATE 2022.
+Este repositório contém um aplicativo desenvolvido para auxiliar na análise de consumo de energia com base nos dados da CCEE (Câmara de Comercialização de Energia Elétrica). A ferramenta é voltada especialmente para comercializadoras, consultores ou consumidores que precisam identificar qual flexibilidade aplicar de acordo com o histórico de consumo dos clientes.
  
 ⚙️ Funcionalidades:
  
