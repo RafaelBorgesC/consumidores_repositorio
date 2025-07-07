@@ -305,7 +305,8 @@ empresas_selecionadas = st.multiselect(
     "Selecione as empresas desejadas",
     options=empresas_disponiveis,
     default=None,
-    placeholder="Selecione as empresas desejadas"
+    placeholder="Selecione as empresas desejadas",
+    help="Selecione uma ou mais empresas para análise. Se nenhuma empresa for selecionada, todos os dados serão carregados."
 )
 
 col1, col2, col3 = st.columns([1, 1, 1], gap='small', )
@@ -780,7 +781,7 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
             mask = ~df_ultimos_12_meses["CNPJ_CARGA"].isna()
             df_ultimos_12_meses.loc[mask, "CNPJ_CARGA"] = (
                 df_ultimos_12_meses.loc[mask, "CNPJ_CARGA"]
-                .astype(float).astype(int).astype(str).str.zfill(14)
+                #.astype(float).astype(int).astype(str).str.zfill(14) conversão desnecessária porque foi aplicado as bases de dados
                 .str.replace(r'(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})', r'\1.\2.\3/\4-\5', regex=True)
             )
 
