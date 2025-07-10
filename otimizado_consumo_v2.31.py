@@ -350,27 +350,27 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
          
         
         # Diagnóstico dos dados da API
-        with st.sidebar.expander("Diagnóstico dos dados da API", icon="🔍"):
-            st.write(f"Shape dos dados da API: {df_2025.shape}")
+        #with st.sidebar.expander("Diagnóstico dos dados da API", icon="🔍"):
+        #   st.write(f"Shape dos dados da API: {df_2025.shape}")
             
-            if not df_2025.empty:
-                st.write(f"Colunas disponíveis na API: {df_2025.columns.tolist()}")
-                st.write(f"Amostra dos dados da API:")
-                st.dataframe(df_2025.head(df_2025.shape[0]))
+        #   if not df_2025.empty:
+        #       st.write(f"Colunas disponíveis na API: {df_2025.columns.tolist()}")
+        #       st.write(f"Amostra dos dados da API:")
+        #       st.dataframe(df_2025.head(df_2025.shape[0]))
                 
-                if "MES_REFERENCIA" in df_2025.columns:
-                    st.write(f"Período dos dados: {df_2025['MES_REFERENCIA'].min()} a {df_2025['MES_REFERENCIA'].max()}")
+        #       if "MES_REFERENCIA" in df_2025.columns:
+        #           st.write(f"Período dos dados: {df_2025['MES_REFERENCIA'].min()} a {df_2025['MES_REFERENCIA'].max()}")
                   
                 # Verificar coluna de consumo
-                consumo_cols = [col for col in df_2025.columns if "CONSUMO" in col.upper()]
-                if consumo_cols:
-                    st.write(f"Colunas de consumo encontradas: {consumo_cols}")
-                    for col in consumo_cols:
-                        st.write(f"Valor médio de {col}: {df_2025[col].mean()}")
-                else:
-                    st.warning("Nenhuma coluna de consumo encontrada nos dados da API")
-            else:
-                st.warning("Nenhum dado retornado da API")
+        #       consumo_cols = [col for col in df_2025.columns if "CONSUMO" in col.upper()]
+        #       if consumo_cols:
+        #           st.write(f"Colunas de consumo encontradas: {consumo_cols}")
+        #           for col in consumo_cols:
+        #               st.write(f"Valor médio de {col}: {df_2025[col].mean()}")
+        #       else:
+        #           st.warning("Nenhuma coluna de consumo encontrada nos dados da API")
+        #   else:
+        #       st.warning("Nenhum dado retornado da API")
 
         # Combinar dados da empresa
         df_empresa = pd.concat([df_2022, df_2023, df_2024, df_2025], ignore_index=True)
