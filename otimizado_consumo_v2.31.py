@@ -24,8 +24,8 @@ st.title("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📊 **Análise de Consumo de Ener
 #st.write("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
 st.markdown("<br>",unsafe_allow_html=True)  # Espaço em branco
 
-st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
-st.sidebar.metric("Uso de CPU", f"{psutil.cpu_percent(interval=1)} %")
+#st.sidebar.metric("Uso de memória", f"{psutil.Process().memory_info().rss / (1024 * 1024):.1f} MB")
+#st.sidebar.metric("Uso de CPU", f"{psutil.cpu_percent(interval=1)} %")
 #st.sidebar.title("Analise de dados da API")
 
 
