@@ -1,6 +1,6 @@
 pandas
-numpy
+#numpy
 streamlit==1.45.1
 plotly
-psutil
+#psutil
 requests
