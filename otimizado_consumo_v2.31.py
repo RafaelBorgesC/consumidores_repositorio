@@ -1,12 +1,12 @@
 import pandas as pd
-import numpy as np
+#import numpy as np
 import streamlit as st
 import plotly.graph_objects as go
 import requests
 import time
 from calendar import monthrange
 #import re
-import psutil  # Para monitorar o uso de memória
+#import psutil  # Para monitorar o uso de memória
 import gc  # Garbage collector
 import os
 
