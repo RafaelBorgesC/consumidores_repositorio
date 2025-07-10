@@ -915,8 +915,7 @@ if st.button(":red[Gerar Gráfico]") and empresas_selecionadas:
     clear_memory()
 else:
     st.info("Selecione pelo menos uma empresa e clique em 'Gerar Gráfico' para visualizar os dados.",icon=":material/info:")
-x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-
-col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
-with col1:
-    versao = st.write("Versão: 2.31", unsafe_allow_html=True)
+#x = st.sidebar.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+#col1, col2 = st.sidebar.columns(2, gap="small", vertical_alignment="center",border=False)
+#with col1:
+#    versao = st.write("Versão: 2.31", unsafe_allow_html=True)
